@@ -1,7 +1,5 @@
-export interface Message {
-  url: string;
-}
+import { GifUrl } from "@shared/types";
 
 export interface Option {
-  handler: (ur: string) => any;
+  handler: (ur: GifUrl) => any;
 }

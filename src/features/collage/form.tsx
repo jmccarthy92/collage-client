@@ -2,15 +2,15 @@ import { uploadFile } from "@shared/blobstorage";
 import { useSasToken } from "@shared/hooks/useSasToken";
 import { Formik, FormikHelpers } from "formik";
 import React, { useState } from "react";
-import { useGifMessage } from "../upload/useGifMessage";
-import { isValidDomain } from "./util";
+import { useGifMessage } from "@features/upload/useGifMessage";
+import { isValidDomain } from "@features/collage/util";
 
 interface FormState {
   url?: string;
   file?: File;
 }
 
-const Form: React.FC = () => {
+const Form: React.FC<{ className: string }> = ({ className }) => {
   const [isFileUpload, setFileUploadForm] = useState(false);
   const sasToken = useSasToken();
   const { sendGif } = useGifMessage();
@@ -60,41 +60,48 @@ const Form: React.FC = () => {
         isSubmitting,
         setFieldValue,
       }) => (
-        <form onSubmit={handleSubmit}>
-          <input
-            type="checkbox"
-            name="upload"
-            onChange={(event) => {
-              const {
-                target: { checked },
-              } = event;
-              handleChange(event);
-              setFileUploadForm(checked);
-            }}
-            onBlur={handleBlur}
-            checked={isFileUpload}
-          />
-          {isFileUpload && (
+        <form className={className} onSubmit={handleSubmit}>
+          <div className="input-group">
+            <label htmlFor="upload">Use File Upload</label>
             <input
-              type="file"
-              name="file"
-              required={isFileUpload}
-              onChange={({ target: { files } }) => {
-                if (files && files.length) setFieldValue("file", files[0]);
+              type="checkbox"
+              name="upload"
+              onChange={(event) => {
+                handleChange(event);
+                setFileUploadForm(event.target.checked);
               }}
               onBlur={handleBlur}
-              accept="image/gif"
+              checked={isFileUpload}
             />
+          </div>
+          <br />
+          {isFileUpload && (
+            <>
+              <label htmlFor="file">Upload file</label>
+              <input
+                type="file"
+                name="file"
+                required={isFileUpload}
+                onChange={({ target: { files } }) => {
+                  if (files && files.length) setFieldValue("file", files[0]);
+                }}
+                onBlur={handleBlur}
+                accept="image/gif"
+              />
+            </>
           )}
           {!isFileUpload && (
-            <input
-              type="url"
-              name="url"
-              required={!isFileUpload}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.url}
-            />
+            <>
+              <label htmlFor="url">Enter URL</label>
+              <input
+                type="url"
+                name="url"
+                required={!isFileUpload}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.url}
+              />
+            </>
           )}
           {errors.url && touched.url && errors.url}
           <button type="submit" disabled={isSubmitting}>

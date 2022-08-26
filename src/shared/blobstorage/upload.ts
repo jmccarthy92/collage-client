@@ -26,9 +26,9 @@ export async function uploadFile(
   );
   // upload file
   return blobClient.uploadData(file, {
-      blobHTTPHeaders: { blobContentType: file.type },
-      metadata,
-      onProgress,
-      abortSignal,
+    blobHTTPHeaders: { blobContentType: file.type },
+    metadata,
+    onProgress,
+    abortSignal,
   });
 }
