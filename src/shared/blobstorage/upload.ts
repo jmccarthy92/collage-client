@@ -25,12 +25,10 @@ export async function uploadFile(
     `${blobDir}/${uuid()}_${fileName ? fileName : file.name}`
   );
   // upload file
-  return Promise.allSettled([
-    blobClient.uploadData(file, {
-      blobHTTPHeaders: { blobContentType: file.type },
-      metadata,
-      onProgress,
-      abortSignal,
-    }),
-  ]);
+  return blobClient.uploadData(file, {
+    blobHTTPHeaders: { blobContentType: file.type },
+    metadata,
+    onProgress,
+    abortSignal,
+  });
 }
