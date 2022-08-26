@@ -1,8 +1,7 @@
 import React from "react";
-import logo from "./logo.svg";
 import "./App.css";
 import { SignalRProvider } from "@shared/contexts/signalr";
-import { Collage } from "./features/collage";
+import { Collage } from "@features/collage";
 
 function App() {
   return (

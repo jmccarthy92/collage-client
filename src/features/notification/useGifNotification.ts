@@ -1,14 +1,15 @@
 import { SignalRContext } from "@shared/contexts/signalr";
+import { GifUrl } from "@shared/types";
 import { useCallback, useContext, useEffect } from "react";
-import { Message, Option } from "./types";
+import { Option } from "./types";
 
 export const useGifNotification = ({ handler }: Option): void => {
   const { connection } = useContext(SignalRContext);
 
   const onNotification = useCallback(
-    (message: Message) => {
+    (message: GifUrl) => {
       console.log(`Message received for 'newGif': ${message}`);
-      handler(message.url);
+      handler(message);
     },
     [handler]
   );
