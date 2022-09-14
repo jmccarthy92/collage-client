@@ -1,0 +1,53 @@
+trigger:
+  - master
+
+variables:
+  azureSubscription: "james-subscription"
+  appName: client-gifcollage-prod
+  tag: "$(Build.BuildId)"
+  # Agent VM image name
+  vmImageName: "ubuntu-latest"
+
+pool:
+  # name: Default
+  vmImage: $(vmImageName)
+
+stages:
+  - stage: Build
+    displayName: "Build and Test"
+    jobs:
+      - job: BuildAndTest
+        pool: Azure Pipelines
+        steps:
+          - task: NodeTool@0
+            displayName: "Use Node 16.9.1"
+            inputs:
+              versionSpec: 16.9.1
+          - script: |
+              npm ci
+              npm run build
+            displayName: "npm install, build, and test"
+          - task: CopyFiles@2
+            inputs:
+              sourceFolder: "build"
+              contents: "**"
+              targetFolder: $(System.DefaultWorkingDirectory)/build
+          - task: ArchiveFiles@2
+            displayName: "Archive files"
+            inputs:
+              rootFolderOrFile: "$(System.DefaultWorkingDirectory)/build"
+              includeRootFolder: false
+              archiveFile: "$(System.ArtifactsDirectory)/build$(Build.BuildId).zip"
+          - publish: "$(System.ArtifactsDirectory)/build$(Build.BuildId).zip"
+            artifact: drop
+      - job: Deploy
+        pool: Azure Pipelines
+        steps:
+          - task: AzureWebApp@1
+            displayName: "Azure Web App Deploy"
+            inputs:
+              azureSubscription: $(azureSubscription)
+              appType: webAppLinux
+              appName: $(appName)
+              package: "$(System.ArtifactsDirectory)/build$(Build.BuildId).zip"
+              startUpCommand: "pm2 serve /home/site/wwwroot --spa --no-daemon"
