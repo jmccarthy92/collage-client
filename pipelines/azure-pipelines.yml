@@ -51,5 +51,5 @@ stages:
               azureSubscription: $(azureSubscription)
               appType: webAppLinux
               appName: $(appName)
-              package: "$(System.ArtifactsDirectory)/build$(Build.BuildId).zip"
+              package: "$(Pipeline.Workspace)/build$(Build.BuildId).zip"
               startUpCommand: "pm2 serve /home/site/wwwroot --spa --no-daemon"
