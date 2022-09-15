@@ -2,7 +2,7 @@ trigger:
   - master
 
 variables:
-  azureSubscription: "james-subscription"
+  azureSubscription: james-fe-subscription
   appName: client-gifcollage-prod
   tag: "$(Build.BuildId)"
   # Agent VM image name
